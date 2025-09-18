@@ -26,7 +26,7 @@ the code will just run and log output that it skipped creation of each item.
 - Python installed: https://www.python.org/downloads/windows/  (choose a stable release)
 
 
-# Initial Setup is to Create GitHub App and Generate a PEM Key
+# Initial Setup is to Create GitHub App and PEM Key
 This requires a GitHub App created in either GitHub Personal account or the GitHub Organization.  
 It's whereever you are hosting your repos that you want to connect with Azure. A github app is used in order for 
 the code that runs locally is able to authenticate to github repo's and create secrets if they don't exists.
@@ -40,19 +40,19 @@ the code that runs locally is able to authenticate to github repo's and create s
     b. Click "New GitHub App"
     
     c. Fill out the basic information: 
-        - App name: Something like "Secret Manager" or "My Automation App"
-        - Description: Brief description of what it does
-        - Homepage URL: Can be your GitHub profile or any URL
-        - Webhook URL: Leave blank for now (you can use a placeholder like https://example.com)
-        - Webhook secret: Leave blank for now
+        App name: Something like "Secret Manager" or "My Automation App"
+        Description: Brief description of what it does
+        Homepage URL: Can be your GitHub profile or any URL
+        Webhook URL: Leave blank for now (you can use a placeholder like https://example.com)
+        Webhook secret: Leave blank for now
 
 
 - Step 2: Configure Permissions
 
     a. Under Repository permissions, set:
-        - Actions: Read and Write
-        - Contents: Read 
-        - Meatadata: Read
+        Actions: Read and Write
+        Contents: Read 
+        Meatadata: Read
 
             
 - Step 3: Choose where it can be installed and create
@@ -61,10 +61,10 @@ the code that runs locally is able to authenticate to github repo's and create s
     b. Click "Create GitHub App"
 
 - Step 4: Setup a Private Key
-
-    Note: Private key will be used by the client to connect to github   
-    
+        
     a. Click Generate Private Key and it should download a pem file automatically to your downloads folder
+    
+    Note: Private key will be used by the client to connect to github   
 
 
 # Setup Windows based client
@@ -85,17 +85,17 @@ leveraging the previously created github app. This is done using the downloaded 
         For Example: "c:\users\v2train\.ssh\mypemfile.pem"
   
     b. Copy the GitHub App install 
-        - Go to GitHub Settings and scroll down and under Integrations, click Applications
-        - For the desired github app, click configure button
-        - The installation id will be the set of digits at the end of the url
+         Go to GitHub Settings and scroll down and under Integrations, click Applications
+         For the desired github app, click configure button
+         The installation id will be the set of digits at the end of the url
         
         For Example: github.com/settings/installations/861022
-        - Copy off 861022
+         Copy off 861022
   
     c. Copy the Github App 
-        - Go to GitHub Settings and scroll down and click Developer Settings
-        - Click GitHub Apps and click edit button next to desired github app
-        - copy the App ID off
+         Go to GitHub Settings and scroll down and click Developer Settings
+         Click GitHub Apps and click edit button next to desired github app
+         copy the App ID off
 
 
 # Create Environment Variables 
