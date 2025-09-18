@@ -12,11 +12,8 @@ What is created?
     Federated Credential representing the repo.
     Secrets Created in GitHub Repo: used to authenticate to Azure
 
-You have the option to add multiple repositories or one repository.  
-If a repository doesn't exists, the app will close out gracefully and inform you.
-A check is performed for existing app registration, federated credential, and repo secrets.  
-If any exists, they will be skipped.  This means that if I run this twice using the same settings,
-the code will just run and log output that it skipped creation of each item.
+You have the option to add multiple repositories or one repository. If a repository doesn't exists, the app will close out gracefully and inform you.
+A check is performed for existing app registration, federated credential, and repo secrets.  If any exists, they will be skipped.  This means that if I run this twice using the same settings, the code will just run and log output that it skipped creation of each item.
 
 
 # Prerequisites on Client Machine running this code
@@ -42,7 +39,7 @@ the code that runs locally is able to authenticate to github repo's and create s
 
     b. Click "New GitHub App"
     
-    
+
     c. Fill out the basic information:
 
         App name: Something like "Secret Manager" or "My Automation App"
@@ -133,15 +130,21 @@ Create three environment variables representing the information you collected in
 
 # Steps to run application
 - Step 1: Update main.py and uncommnet and add your details
+
     owner = 'username'
+
     repositories = ['repo1', 'repo2']  # add all repositories that need access
+
     gh_org_user = 'github user/org that owns the repo'
+
     app_name = "app-name" #name desired for app registration in Azure
+
     app_description = "Description of the app registration"
 
     Save Changes
 
 - Step 2: Log into Azure
+    
     From terminal session run: az login  
 
 - Step 3: Run python application
