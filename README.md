@@ -34,16 +34,25 @@ the code that runs locally is able to authenticate to github repo's and create s
 - Step 1: Create GitHub App
 
     a. Go to GitHub Settings 
+        
         For personal account: https://github.com/settings/apps
+        
         For organization: https://github.com/organizations/YOUR_ORG/settings/apps
     
+
     b. Click "New GitHub App"
     
-    c. Fill out the basic information 
+    
+    c. Fill out the basic information:
+
         App name: Something like "Secret Manager" or "My Automation App"
+        
         Description: Brief description of what it does
+        
         Homepage URL: Can be your GitHub profile or any URL
+        
         Webhook URL: Leave blank for now (you can use a placeholder like https://example.com)
+        
         Webhook secret: Leave blank for now
 
 
