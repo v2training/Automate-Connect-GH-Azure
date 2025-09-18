@@ -112,11 +112,11 @@ Create three environment variables representing the information you collected in
   
   a. run the following:
 
-    setx GITHUB_APP_PRIVATE_KEY_PATH "C:\Users\yourusername\.ssh\mypemfile.pe
+        setx GITHUB_APP_PRIVATE_KEY_PATH "C:\Users\yourusername\.ssh\mypemfile.pe
   
-    setx GITHUB_APP_INSTALL_ID "your_app_install_id"    
+        setx GITHUB_APP_INSTALL_ID "your_app_install_id"    
   
-    setx GITHUB_APP_ID "your_app_id"
+        setx GITHUB_APP_ID "your_app_id"
 
 - Step 3: Reboot computer
 
