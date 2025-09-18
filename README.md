@@ -2,6 +2,7 @@
 This repo contains a simple python app that will automate initial setup between Azure and GitHub.  
 Assumption is this will be used with github actions to connect and deploy to Azure Kubernetes Service.
 What is created?
+    
     Azure App Registration 
     
     Roles Assigned at Subscription Level
