@@ -110,6 +110,8 @@ Create three environment variables representing the information you collected in
 - Step 1: Launch PowerShell or Command Prompt
 - Step 2: Create Environment Variable representing the private key path, App Install ID, and App 
   
+  a. run the following:
+
     setx GITHUB_APP_PRIVATE_KEY_PATH "C:\Users\yourusername\.ssh\mypemfile.pe
   
     setx GITHUB_APP_INSTALL_ID "your_app_install_id"    
@@ -130,18 +132,20 @@ Create three environment variables representing the information you collected in
 
 # Steps to run application
 - Step 1: Update main.py and uncommnet and add your details
+    a. update the following:
 
-    owner = 'username'
+        owner = 'username'
 
-    repositories = ['repo1', 'repo2']  # add all repositories that need access
+        repositories = ['repo1', 'repo2']  # add all repositories that need access
 
-    gh_org_user = 'github user/org that owns the repo'
+        gh_org_user = 'github user/org that owns the repo'
 
-    app_name = "app-name" #name desired for app registration in Azure
+        app_name = "app-name" #name desired for app registration in Azure
 
-    app_description = "Description of the app registration"
+        app_description = "Description of the app registration"
 
-    Save Changes
+    b. save Changes
+
 
 - Step 2: Log into Azure
     
