@@ -132,7 +132,8 @@ Create three environment variables representing the information you collected in
 
 
 # Steps to run application
-- Step 1: Update main.py and uncommnet and add your details
+- Step 1: Update main.py and uncomment and add your details
+
     a. update the following:
 
         owner = 'username'
