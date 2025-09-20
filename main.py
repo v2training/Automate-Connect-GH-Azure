@@ -11,15 +11,16 @@ if sys.platform == 'win32':
 async def main():    
     try:
         # Fill the following 5 variables with your details below and uncomment them
-        #owner = 'username'
-        #repositories = ['repo1', 'repo2']  # add all repositories that need access
-        #gh_org_user = 'github user/org that owns the repo'
-        #app_name = "app-name" #name of app registration in Azure
-        #app_description = "Description of the app registration"
-            
+        owner = 'username'
+        repositories = ['repo1', 'repo2']  # add all repositories that need access
+        gh_org_user = 'github user/org that owns the repo'
+        app_name = "app-name" #name of app registration in Azure
+        app_description = "Description of the app registration"
+        rgname = "resource group" #resource group name that host azure resources 
+
         # Initialize Azure App Manager
-        az_app_manager = AzureAppRegManager()
-        
+        az_app_manager = AzureAppRegManager(rgname)
+
         #auth to github
         gh_secret_magic = githubsec.GitHubSecretMagic()
 
@@ -42,7 +43,7 @@ async def main():
         for repo in repositories:
             #create federated credentials
             await az_app_manager.create_federated_credentials(gh_org_user, repo)
-
+           
             #get existing secrets
             existing_secrets = gh_secret_magic.get_existing_secrets(owner, repo)                                    
             
@@ -50,7 +51,8 @@ async def main():
             try:                
                 for key, value in app_info.items():                    
                     try:
-                        if key.upper() in existing_secrets:
+                        #if it's existing secret and app registration not created, skip creating secret
+                        if key.upper() in existing_secrets and not az_app_manager.appreg_created:
                             print(f"Secret '{key}' already exists in {repo}, skipping creation.")
                             continue
                         else: 
@@ -66,7 +68,7 @@ async def main():
 
 
     except Exception as outer_e:
-        print(f"Outer Error: {outer_e}")
+        print(f"Outer Error: {outer_e} Exiting Program.")
 
 
 if __name__ == "__main__":

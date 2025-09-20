@@ -1,20 +1,30 @@
 # Automate-Connect-GH-Azure
 This repo contains a simple python app that will automate initial setup between Azure and GitHub.  
-Assumption is this will be used with github actions to connect and deploy to Azure Kubernetes Service.
+Assumption is this will be used by github actions workflow to connect and deploy to Azure Kubernetes Service and 
+push images up to Azure Container Registry.  
+
 What is created?
     
     Azure App Registration 
     
-    Roles Assigned at Subscription Level
-        "AcrPush",
-        "Azure Kubernetes Service Cluster User Role", 
-        "Azure Kubernetes Service Contributor Role"
-
+    Roles Assigned at Resource Group Level
+        "Contributor",
+        "Azure Kubernetes Service RBAC Cluster Admin" 
+        
     Federated Credential representing the repo.
     Secrets Created in GitHub Repo: used to authenticate to Azure
 
 You have the option to add multiple repositories or one repository. If a repository doesn't exists, the app will close out gracefully and inform you.
-A check is performed for existing app registration, federated credential, and repo secrets.  If any exists, they will be skipped.  This means that if I run this twice using the same settings, the code will just run and log output that it skipped creation of each item.
+A check is performed for existing resource group, it it doesn't exists or unable to retrieve the program will terminate before doing any creation.
+Some important notes on what is created vs skipped.
+    
+    App Registration will be created if it doesn't exists.
+    
+    Federated credentials will be created only if App Registration is provisioned
+    
+    Repo secrets will be skipped if they exists and app registration wasn't created during the same run
+
+Example: I run this twice using the same settings, the second run will log output that it skipped creation of each item.
 
 
 # Prerequisites on Client Machine running this code
@@ -22,6 +32,16 @@ A check is performed for existing app registration, federated credential, and re
 - Install Azure CLI if it's not installed:  https://aka.ms/installazurecliwindows
 - VS Code installed: https://code.visualstudio.com/download
 - Python installed: https://www.python.org/downloads/windows/  (choose a stable release)
+
+
+
+# Prerequisites on Azure in order to run this code
+- Resource Group that contains or will contain the following resources
+
+    Azure Kuberenetes Service
+    Azure Container Registry
+
+- The resources within the resource group can be created later but the resource group must exists prior to running this app
 
 
 # Initial Setup is to Create GitHub App and PEM Key

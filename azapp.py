@@ -11,7 +11,7 @@ from msgraph.generated.applications.applications_request_builder import Applicat
 
 class AzureAppRegManager:
     
-    def __init__(self):
+    def __init__(self, rgname):
         """Initialize the Azure clients"""
         # Use default credential chain (includes Azure CLI, managed identity, etc.)
         self.credential = DefaultAzureCredential()
@@ -36,9 +36,21 @@ class AzureAppRegManager:
             credential=self.credential,
             subscription_id=self.subscription_id
         )
+                
+        # If a resource group name is provided, get its details        
+        rgres = self.resource_client.resource_groups.get(rgname)
+        
+        if not rgres:
+            raise Exception(f"Resource group '{rgname}' not found in subscription {self.subscription_id}")
 
+        else:
+            self.resource_group = rgname
+            
         #initialize app registration variables
         self.app_object_id = None
+
+        #app registration created flag
+        self.appreg_created = False
 
 
     def _get_azure_context(self):
@@ -81,7 +93,7 @@ class AzureAppRegManager:
 
             # If app registration exists, return existing app details
             if appexists.value and len(appexists.value) > 0:
-                print(f"App registration '{app_name}' already exists.")
+                print(f"App registration '{app_name}' already exists.")                
                 existing_app = appexists.value[0]
                 self.app_object_id = existing_app.id
                 return {
@@ -98,7 +110,7 @@ class AzureAppRegManager:
                 print(f"App Name: {created_app.display_name}")
                 print(f"Application ID: {created_app.app_id}")
                 print(f"Object ID: {created_app.id}")
-        
+                self.appreg_created = True
                 self.app_object_id = created_app.id
             
                 # Create service principal for the app
@@ -111,7 +123,7 @@ class AzureAppRegManager:
             
                 await asyncio.sleep(30)  # Now properly awaited within async context            
            
-                # Assign roles to the service principal (this is sync)
+                # Assign roles to the service principal 
                 self.assign_roles_to_app(created_sp.id)
 
                 return {
@@ -125,26 +137,25 @@ class AzureAppRegManager:
             raise
 
 
-    def assign_roles_to_app(self, service_principal_id, scope="/subscriptions/{subscription_id}"):
+    def assign_roles_to_app(self, service_principal_id):
         """Assign Azure roles to the service principal"""
-        
+        print(f"Assigning roles to service principal...")
+
+        scope=f"/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}"
+
         # Define the roles to assign
         roles_to_assign = [
-            "7f951dda-4ed3-4680-a7ca-43fe172d538d",  # AcrPush
-            "4abbcc35-e782-43d8-92c5-2d3f1bd2253f",  # Azure Kubernetes Service Cluster User Role  
-            "ed7f3fbd-7b88-4dd4-9017-9adb7ce333f8"   # Azure Kubernetes Service Contributor Role
+            "b24988ac-6180-42a0-ab88-20f7382dd24c",  # Contributor
+            "b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b"   # Azure Kubernetes Service RBAC Cluster Admin
         ]
         
         role_names = [
-            "AcrPush",
-            "Azure Kubernetes Service Cluster User Role", 
-            "Azure Kubernetes Service Contributor Role"
-        ]
-        
-        scope = scope.format(subscription_id=self.subscription_id)
-        
-        print(f"Assigning roles to service principal...")
-        print(f"Scope: {scope}")
+            "Contributor",
+            "Azure Kubernetes Service RBAC Cluster Admin"
+        ]       
+   
+
+        print(f"assigning roles to Scope: {scope}")
 
         for role_id, role_name in zip(roles_to_assign, role_names):
             try:
