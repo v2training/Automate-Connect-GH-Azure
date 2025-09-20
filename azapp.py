@@ -11,7 +11,7 @@ from msgraph.generated.applications.applications_request_builder import Applicat
 
 class AzureAppRegManager:
     
-    def __init__(self, rgname):
+    def __init__(self, rgname, cluster, containerreg):
         """Initialize the Azure clients"""
         # Use default credential chain (includes Azure CLI, managed identity, etc.)
         self.credential = DefaultAzureCredential()
@@ -45,7 +45,11 @@ class AzureAppRegManager:
 
         else:
             self.resource_group = rgname
-            
+        
+        # assign k8s cluster and container registry
+        self.cluster_name = cluster
+        self.container_registry = containerreg
+
         #initialize app registration variables
         self.app_object_id = None
 
@@ -99,7 +103,10 @@ class AzureAppRegManager:
                 return {
                     'subscription_id': self.subscription_id,
                     'tenant_id': self.tenant_id,
-                    'client_id': existing_app.app_id
+                    'client_id': existing_app.app_id,
+                    'resource_group': self.resource_group,
+                    'cluster_name': self.cluster_name,
+                    'container_registry': self.container_registry
                 }
 
             # existing app not found, create new one
@@ -123,13 +130,16 @@ class AzureAppRegManager:
             
                 await asyncio.sleep(30)  # Now properly awaited within async context            
            
-                # Assign roles to the service principal 
+                # Assign roles to the service principal (this is sync)
                 self.assign_roles_to_app(created_sp.id)
 
                 return {
                     'subscription_id': self.subscription_id,
                     'tenant_id': self.tenant_id,
-                    'client_id': created_app.app_id
+                    'client_id': created_app.app_id,
+                    'resource_group': self.resource_group,
+                    'cluster_name': self.cluster_name,
+                    'container_registry': self.container_registry
                 }
 
         except Exception as e:

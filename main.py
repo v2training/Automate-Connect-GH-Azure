@@ -17,16 +17,18 @@ async def main():
         app_name = "app-name" #name of app registration in Azure
         app_description = "Description of the app registration"
         rgname = "resource group" #resource group name that host azure resources 
+        cluster_name = 'akscluster'  #azure kubernetes cluster name
+        container_registry = 'acrregistry' #azure container registry name
 
         # Initialize Azure App Manager
-        az_app_manager = AzureAppRegManager(rgname)
+        az_app_manager = AzureAppRegManager(rgname, cluster_name, container_registry)
 
         #auth to github
         gh_secret_magic = githubsec.GitHubSecretMagic()
 
-
         #ensure all repos exists and accessible
         for repo in repositories:
+            print(f'Checking if Repo exists: {repo}')
             repo_check = gh_secret_magic.check_repository_exists(owner, repo)
             
             if not repo_check['exists'] or not repo_check['accessible']:
