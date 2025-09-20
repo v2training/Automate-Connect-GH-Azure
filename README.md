@@ -12,7 +12,7 @@ What is created?
         "Azure Kubernetes Service RBAC Cluster Admin" 
         
     Federated Credential representing the repo.
-    
+
     Secrets Created in GitHub Repo: used to authenticate to Azure
 
 You have the option to add multiple repositories or one repository. If a repository doesn't exists, the app will close out gracefully and inform you.
@@ -40,6 +40,7 @@ Example: I run this twice using the same settings, the second run will log outpu
 - Resource Group that contains or will contain the following resources
 
     Azure Kuberenetes Service
+    
     Azure Container Registry
 
 - The resources within the resource group can be created later but the resource group must exists prior to running this app
