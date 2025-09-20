@@ -12,6 +12,7 @@ What is created?
         "Azure Kubernetes Service RBAC Cluster Admin" 
         
     Federated Credential representing the repo.
+    
     Secrets Created in GitHub Repo: used to authenticate to Azure
 
 You have the option to add multiple repositories or one repository. If a repository doesn't exists, the app will close out gracefully and inform you.
