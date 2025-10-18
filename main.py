@@ -10,18 +10,23 @@ if sys.platform == 'win32':
 
 async def main():    
     try:
-        # Fill the following 5 variables with your details below and uncomment them
-        owner = 'username'
+        # # Fill the following 5 variables with your details below and uncomment them       
         repositories = ['repo1', 'repo2']  # add all repositories that need access
         gh_org_user = 'github user/org that owns the repo'
         app_name = "app-name" #name of app registration in Azure
         app_description = "Description of the app registration"
-        rgname = "resource group" #resource group name that host azure resources 
-        cluster_name = 'akscluster'  #azure kubernetes cluster name
+        rgname = "resource group" #resource group name that host azure resources         
         container_registry = 'acrregistry' #azure container registry name
+        aks_enabled = False #set to True if you want to assign AKS role to app registration       
+        
+        if aks_enabled:
+            cluster_name = input("Enter AKS Cluster Name: ")
+        
+        else:
+            cluster_name = None
 
         # Initialize Azure App Manager
-        az_app_manager = AzureAppRegManager(rgname, cluster_name, container_registry)
+        az_app_manager = AzureAppRegManager(rgname, cluster_name, container_registry, aks_enabled)
 
         #auth to github
         gh_secret_magic = githubsec.GitHubSecretMagic()
@@ -29,15 +34,14 @@ async def main():
         #ensure all repos exists and accessible
         for repo in repositories:
             print(f'Checking if Repo exists: {repo}')
-            repo_check = gh_secret_magic.check_repository_exists(owner, repo)
+            repo_check = gh_secret_magic.check_repository_exists(gh_org_user, repo)
             
             if not repo_check['exists'] or not repo_check['accessible']:
-                print(f"Repository {owner}/{repo} does not exist or is not accessible. Exiting.")
+                print(f"Repository {gh_org_user}/{repo} does not exist or is not accessible. Exiting.")
                 return
             
             else:
-                print(f"Repository {owner}/{repo} exists and accessible. Proceeding...")
-
+                print(f"Repository {gh_org_user}/{repo} exists and accessible. Proceeding...")
 
         #create app registration and assign roles
         app_info = await az_app_manager.create_app_registration(app_name, app_description)
@@ -47,7 +51,7 @@ async def main():
             await az_app_manager.create_federated_credentials(gh_org_user, repo)
            
             #get existing secrets
-            existing_secrets = gh_secret_magic.get_existing_secrets(owner, repo)                                    
+            existing_secrets = gh_secret_magic.get_existing_secrets(gh_org_user, repo)                                    
             
             #create github secrets
             try:                
@@ -60,7 +64,7 @@ async def main():
                         else: 
                             print(f"{key}: {value}")
                             print(f"Creating secret '{key}' in {repo}...")
-                            gh_secret_magic.createrepoSecret(owner, repo, key, value)
+                            gh_secret_magic.createrepoSecret(gh_org_user, repo, key, value)
 
                     except Exception as inner_e:
                         print(f"Error creating secret: {inner_e}")

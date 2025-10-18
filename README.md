@@ -9,7 +9,8 @@ What is created?
     
     Roles Assigned at Resource Group Level
         "Contributor",
-        "Azure Kubernetes Service RBAC Cluster Admin" 
+        "ACR Pull",
+        Optionally: "Azure Kubernetes Service RBAC Cluster Admin" 
         
     Federated Credential representing the repo.
 
@@ -39,9 +40,11 @@ Example: I run this twice using the same settings, the second run will log outpu
 # Prerequisites on Azure in order to run this code
 - Resource Group that contains or will contain the following resources
 
-    Azure Kuberenetes Service
-    
-    Azure Container Registry
+    Azure Kuberenetes Service + Azure Container Registry
+
+        or
+
+    Azure Container Registry + Azure Container Instance
 
 - The resources within the resource group can be created later but the resource group must exists prior to running this app
 

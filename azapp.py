@@ -10,8 +10,9 @@ from msgraph.generated.applications.applications_request_builder import Applicat
 
 
 class AzureAppRegManager:
-    
-    def __init__(self, rgname, cluster, containerreg):
+
+    def __init__(self, rgname, cluster=None, containerreg=None, aks_enabled=False):
+        
         """Initialize the Azure clients"""
         # Use default credential chain (includes Azure CLI, managed identity, etc.)
         self.credential = DefaultAzureCredential()
@@ -56,6 +57,8 @@ class AzureAppRegManager:
         #app registration created flag
         self.appreg_created = False
 
+        #set aks enabled
+        self.aks_enabled = aks_enabled
 
     def _get_azure_context(self):
                                 
@@ -100,14 +103,26 @@ class AzureAppRegManager:
                 print(f"App registration '{app_name}' already exists.")                
                 existing_app = appexists.value[0]
                 self.app_object_id = existing_app.id
-                return {
-                    'subscription_id': self.subscription_id,
-                    'tenant_id': self.tenant_id,
-                    'client_id': existing_app.app_id,
-                    'resource_group': self.resource_group,
-                    'cluster_name': self.cluster_name,
-                    'container_registry': self.container_registry
-                }
+
+                if self.aks_enabled:               
+
+                    return {
+                        'subscription_id': self.subscription_id,
+                        'tenant_id': self.tenant_id,
+                        'client_id': existing_app.app_id,
+                        'resource_group': self.resource_group,
+                        'cluster_name': self.cluster_name,
+                        'container_registry': self.container_registry
+                    }
+                else:
+
+                    return {
+                        'subscription_id': self.subscription_id,
+                        'tenant_id': self.tenant_id,
+                        'client_id': existing_app.app_id,
+                        'resource_group': self.resource_group,                        
+                        'container_registry': self.container_registry
+                    }
 
             # existing app not found, create new one
             else:
@@ -153,17 +168,30 @@ class AzureAppRegManager:
 
         scope=f"/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}"
 
-        # Define the roles to assign
-        roles_to_assign = [
-            "b24988ac-6180-42a0-ab88-20f7382dd24c",  # Contributor
-            "b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b"   # Azure Kubernetes Service RBAC Cluster Admin
-        ]
-        
-        role_names = [
-            "Contributor",
-            "Azure Kubernetes Service RBAC Cluster Admin"
-        ]       
+        if self.aks_enabled and self.cluster_name:
+            # Define the roles to assign
+            roles_to_assign = [
+                "b24988ac-6180-42a0-ab88-20f7382dd24c",  # Contributor
+                "b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b",   # Azure Kubernetes Service RBAC Cluster Admin
+                 "7f951dda-4ed3-4680-a7ca-43fe172d538d"  # AcrPull
+            ]
+            
+            role_names = [
+                "Contributor",
+                "Azure Kubernetes Service RBAC Cluster Admin",
+                "AcrPull"
+            ]       
    
+        else:
+            roles_to_assign = [
+                "b24988ac-6180-42a0-ab88-20f7382dd24c",  # Contributor
+                "7f951dda-4ed3-4680-a7ca-43fe172d538d"  # AcrPull
+            ]
+            
+            role_names = [
+                "Contributor",
+                "AcrPull"
+            ]
 
         print(f"assigning roles to Scope: {scope}")
 
